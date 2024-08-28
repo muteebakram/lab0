@@ -11,7 +11,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # == DO NEVER EDIT THE NEXT LINES for Raspberry Pi Pico VS Code Extension to work ==
 if(WIN32)
-   set(USERHOME $ENV{USERPROFILE})
+    set(USERHOME $ENV{USERPROFILE})
 else()
     set(USERHOME $ENV{HOME})
 endif()
@@ -29,27 +29,33 @@ else()
 endif()
 
 set(pioasm_HINT ${USERHOME}/.pico-sdk/tools/2.0.0/pioasm)
+
 if(EXISTS ${pioasm_HINT})
     set(pioasm_DIR ${pioasm_HINT})
 endif()
+
 set(picotool_HINT ${USERHOME}/.pico-sdk/picotool/2.0.0/picotool)
+
 if(EXISTS ${picotool_HINT})
     set(picotool_DIR ${picotool_HINT})
 endif()
+
 if(PICO_TOOLCHAIN_PATH MATCHES "RISCV")
     set(PICO_PLATFORM rp2350-riscv CACHE STRING "Pico Platform")
+
     if(PICO_TOOLCHAIN_PATH MATCHES "COREV")
         set(PICO_COMPILER pico_riscv_gcc_zcb_zcmp)
     endif()
 endif()
+
 # ====================================================================================
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-if (PICO_SDK_VERSION_STRING VERSION_LESS "1.4.0")
-  message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.4.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
+if(PICO_SDK_VERSION_STRING VERSION_LESS "1.4.0")
+    message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.4.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
 endif()
 
 project(testing C CXX ASM)
@@ -58,8 +64,7 @@ project(testing C CXX ASM)
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-
-add_executable(testing test.c )
+add_executable(testing blink.c)
 
 pico_set_program_name(testing "test")
 pico_set_program_version(testing "0.1")
@@ -70,12 +75,16 @@ pico_enable_stdio_usb(testing 0)
 
 # Add the standard library to the build
 target_link_libraries(testing
-        pico_stdlib)
+    pico_stdlib)
+
+if(PICO_CYW43_SUPPORTED)
+    target_link_libraries(testing pico_cyw43_arch_none)
+endif()
 
 # Add the standard include files to the build
 target_include_directories(testing PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}
-  ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
 )
 
 pico_add_extra_outputs(testing)
@@ -90,14 +99,14 @@ pico_add_extra_outputs(testing)
 # find_program(RENODE renode)
 
 # set(RENODE_FLAGS
-#   --disable-xwt
-#   --port -2
-#   --pid-file renode.pid
-#   --console
-#   )
+# --disable-xwt
+# --port -2
+# --pid-file renode.pid
+# --console
+# )
 
 # add_test(NAME runmytest COMMAND
-#     ${RENODE}
-#      ${RENODE_FLAGS}
-#     -e "$elf=@$<TARGET_FILE:mytest>; $cwd=@${CMAKE_SOURCE_DIR}; include @${CMAKE_SOURCE_DIR}/hello_world.resc"
-#     )
+# ${RENODE}
+# ${RENODE_FLAGS}
+# -e "$elf=@$<TARGET_FILE:mytest>; $cwd=@${CMAKE_SOURCE_DIR}; include @${CMAKE_SOURCE_DIR}/hello_world.resc"
+# )

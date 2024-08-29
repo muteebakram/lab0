@@ -58,36 +58,36 @@ if(PICO_SDK_VERSION_STRING VERSION_LESS "1.4.0")
     message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.4.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
 endif()
 
-project(testing C CXX ASM)
+project(blink C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-add_executable(testing blink.c)
+add_executable(blink blink.c)
 
-pico_set_program_name(testing "test")
-pico_set_program_version(testing "0.1")
+pico_set_program_name(blink "blink")
+pico_set_program_version(blink "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(testing 0)
-pico_enable_stdio_usb(testing 0)
+pico_enable_stdio_uart(blink 0)
+pico_enable_stdio_usb(blink 0)
 
 # Add the standard library to the build
-target_link_libraries(testing
+target_link_libraries(blink
     pico_stdlib)
 
 if(PICO_CYW43_SUPPORTED)
-    target_link_libraries(testing pico_cyw43_arch_none)
+    target_link_libraries(blink pico_cyw43_arch_none)
 endif()
 
 # Add the standard include files to the build
-target_include_directories(testing PRIVATE
+target_include_directories(blink PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/.. # for our common lwipopts or any other standard includes, if required
 )
 
-pico_add_extra_outputs(testing)
+pico_add_extra_outputs(blink)
 
 # include(CTest)
 # #include(${PICO_TOOLCHAIN_PATH}/lib/cmake/unity/unityConfig.cmake)

@@ -1,6 +1,5 @@
 ## Lab 0 - Blink LED on Pico W <br />
 
-
 **Instruction**
 
 Section 4.2: Getting started with Pico W
